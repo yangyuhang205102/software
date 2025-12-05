@@ -18,50 +18,50 @@
       background: #f5f5f5;
     }
 
-    /* 登录页面样式 */
-    .login-page {
+    /* 登录/注册页面通用样式 */
+    .auth-page {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       background: #f5f5f5;
     }
-    .login-card {
+    .auth-card {
       width: 400px;
       padding: 32px;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     }
-    .login-title {
+    .auth-title {
       text-align: center;
       font-size: 24px;
       font-weight: 500;
       margin-bottom: 24px;
       color: #001529;
     }
-    .login-form .form-item {
+    .auth-form .form-item {
       margin-bottom: 16px;
     }
-    .login-form label {
+    .auth-form label {
       display: block;
       margin-bottom: 8px;
       font-size: 14px;
       color: #333;
     }
-    .login-form input {
+    .auth-form input {
       width: 100%;
       padding: 10px 12px;
       border: 1px solid #d9d9d9;
       border-radius: 4px;
       font-size: 14px;
     }
-    .login-form input:focus {
+    .auth-form input:focus {
       outline: none;
       border-color: #1890ff;
       box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
     }
-    .login-btn {
+    .auth-btn {
       width: 100%;
       padding: 10px;
       background: #1890ff;
@@ -71,16 +71,31 @@
       font-size: 14px;
       cursor: pointer;
       transition: background 0.2s;
+      margin-bottom: 16px;
     }
-    .login-btn:hover {
+    .auth-btn:hover {
       background: #40a9ff;
     }
-    .login-error {
+    .auth-error {
       color: #ff4d4f;
       font-size: 12px;
       margin-bottom: 16px;
       text-align: center;
       display: none;
+    }
+    .auth-tip {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+    }
+    .auth-switch {
+      color: #1890ff;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .auth-switch:hover {
+      color: #40a9ff;
+      text-decoration: underline;
     }
 
     /* 导航头部样式 */
@@ -175,7 +190,7 @@
       margin-bottom: 20px;
     }
 
-    /* 通用表格样式（统一设施列表和报修管理的表格） */
+    /* 通用表格样式 */
     .data-table {
       width: 100%;
       border-collapse: collapse;
@@ -238,21 +253,54 @@
   </style>
 </head>
 <body>
-  <!-- 登录页面 -->
-  <div class="login-page" id="login-page">
-    <div class="login-card">
-      <div class="login-title">智慧校园公共设施管理系统</div>
-      <div class="login-error" id="login-error">用户名或密码错误</div>
-      <form class="login-form" id="login-form">
+  <!-- 登录页面（默认显示） -->
+  <div class="auth-page" id="login-page">
+    <div class="auth-card">
+      <div class="auth-title">智慧校园公共设施管理系统</div>
+      <div class="auth-error" id="login-error">用户名或密码错误</div>
+      <form class="auth-form" id="login-form">
         <div class="form-item">
-          <label for="username">用户名</label>
-          <input type="text" id="username" placeholder="请输入用户名" required>
+          <label for="login-username">用户名</label>
+          <input type="text" id="login-username" placeholder="请输入用户名" required>
         </div>
         <div class="form-item">
-          <label for="password">密码</label>
-          <input type="password" id="password" placeholder="请输入密码" required>
+          <label for="login-password">密码</label>
+          <input type="password" id="login-password" placeholder="请输入密码" required>
         </div>
-        <button type="submit" class="login-btn">登录</button>
+        <button type="submit" class="auth-btn">登录</button>
+        <div class="auth-tip">
+          还没有账号？<span class="auth-switch" id="to-register">立即注册</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 注册页面（初始隐藏） -->
+  <div class="auth-page" id="register-page" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-title">用户注册</div>
+      <div class="auth-error" id="register-error">注册失败，请检查信息</div>
+      <form class="auth-form" id="register-form">
+        <div class="form-item">
+          <label for="reg-username">用户名</label>
+          <input type="text" id="reg-username" placeholder="请输入用户名（3-16位）" required>
+        </div>
+        <div class="form-item">
+          <label for="reg-password">密码</label>
+          <input type="password" id="reg-password" placeholder="请输入密码（6-16位）" required>
+        </div>
+        <div class="form-item">
+          <label for="reg-repassword">确认密码</label>
+          <input type="password" id="reg-repassword" placeholder="请再次输入密码" required>
+        </div>
+        <div class="form-item">
+          <label for="reg-phone">联系电话</label>
+          <input type="tel" id="reg-phone" placeholder="请输入联系电话" required>
+        </div>
+        <button type="submit" class="auth-btn">注册</button>
+        <div class="auth-tip">
+          已有账号？<span class="auth-switch" id="to-login">立即登录</span>
+        </div>
       </form>
     </div>
   </div>
@@ -375,7 +423,7 @@
   </main>
 
   <script>
-    // 1. 定义页面内容配置（重点修改设施列表为表格）
+    // 1. 定义页面内容配置
     const pageConfig = {
       facility: {
         title: '设施列表',
@@ -555,55 +603,133 @@
 
     // 2. DOM元素获取
     const loginPage = document.getElementById('login-page');
+    const registerPage = document.getElementById('register-page');
     const navHeader = document.getElementById('nav-header');
     const mainContent = document.getElementById('main-content');
+    
+    // 登录相关元素
     const loginForm = document.getElementById('login-form');
     const loginError = document.getElementById('login-error');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
+    const loginUsername = document.getElementById('login-username');
+    const loginPassword = document.getElementById('login-password');
+    
+    // 注册相关元素
+    const registerForm = document.getElementById('register-form');
+    const registerError = document.getElementById('register-error');
+    const regUsername = document.getElementById('reg-username');
+    const regPassword = document.getElementById('reg-password');
+    const regRepassword = document.getElementById('reg-repassword');
+    const regPhone = document.getElementById('reg-phone');
+    
+    // 切换按钮
+    const toRegister = document.getElementById('to-register');
+    const toLogin = document.getElementById('to-login');
+    
+    // 其他元素
     const menuItems = document.querySelectorAll('.menu-item');
     const logoutBtn = document.getElementById('logout-btn');
     const pageTitle = document.getElementById('page-title');
     const pageContent = document.getElementById('page-content');
 
-    // 3. 初始化检查登录状态
+    // 3. 登录/注册页面切换逻辑
+    toRegister.addEventListener('click', function() {
+      loginPage.style.display = 'none';
+      registerPage.style.display = 'flex';
+      registerError.style.display = 'none'; // 清空注册错误提示
+    });
+
+    toLogin.addEventListener('click', function() {
+      registerPage.style.display = 'none';
+      loginPage.style.display = 'flex';
+      loginError.style.display = 'none'; // 清空登录错误提示
+    });
+
+    // 4. 初始化检查登录状态
     function checkLoginStatus() {
       const token = localStorage.getItem('token');
       if (token) {
-        // 已登录：显示系统页面，隐藏登录页
+        // 已登录：显示系统页面，隐藏登录/注册页
         loginPage.style.display = 'none';
+        registerPage.style.display = 'none';
         navHeader.style.display = 'flex';
         mainContent.style.display = 'block';
       } else {
-        // 未登录：显示登录页，隐藏系统页面
+        // 未登录：显示登录页，隐藏其他
         loginPage.style.display = 'flex';
+        registerPage.style.display = 'none';
         navHeader.style.display = 'none';
         mainContent.style.display = 'none';
       }
     }
 
-    // 4. 登录表单提交事件
+    // 5. 登录表单提交事件
     loginForm.addEventListener('submit', function(e) {
       e.preventDefault(); // 阻止表单默认提交
       
-      // 模拟用户名密码验证（实际项目中需对接后端接口）
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
+      const username = loginUsername.value.trim();
+      const password = loginPassword.value.trim();
       
-      // 测试账号：admin / 123456
+      // 模拟用户名密码验证（测试账号：admin / 123456）
       if (username === 'admin' && password === '123456') {
-        // 登录成功：设置token，隐藏错误提示，刷新登录状态
-        localStorage.setItem('token', 'fake-token-123456'); // 模拟token
+        localStorage.setItem('token', 'fake-token-123456');
         loginError.style.display = 'none';
         alert('登录成功！');
-        checkLoginStatus(); // 切换到系统页面
+        checkLoginStatus();
       } else {
-        // 登录失败：显示错误提示
+        loginError.textContent = '用户名或密码错误';
         loginError.style.display = 'block';
       }
     });
 
-    // 5. 导航菜单点击事件
+    // 6. 注册表单提交事件（含表单验证）
+    registerForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = regUsername.value.trim();
+      const password = regPassword.value.trim();
+      const repassword = regRepassword.value.trim();
+      const phone = regPhone.value.trim();
+      
+      // 表单验证逻辑
+      if (username.length < 3 || username.length > 16) {
+        registerError.textContent = '用户名长度需在3-16位之间';
+        registerError.style.display = 'block';
+        return;
+      }
+      
+      if (password.length < 6 || password.length > 16) {
+        registerError.textContent = '密码长度需在6-16位之间';
+        registerError.style.display = 'block';
+        return;
+      }
+      
+      if (password !== repassword) {
+        registerError.textContent = '两次输入的密码不一致';
+        registerError.style.display = 'block';
+        return;
+      }
+      
+      if (!/^1[3-9]\d{9}$/.test(phone)) {
+        registerError.textContent = '请输入有效的手机号码';
+        registerError.style.display = 'block';
+        return;
+      }
+      
+      // 模拟注册成功（实际项目对接后端接口）
+      // 存储注册的用户信息（模拟）
+      localStorage.setItem('registered_users', JSON.stringify([
+        ...JSON.parse(localStorage.getItem('registered_users') || '[]'),
+        { username, password, phone }
+      ]));
+      
+      alert('注册成功！请登录');
+      // 注册成功后切换到登录页
+      toLogin.click();
+      // 自动填充用户名到登录框
+      loginUsername.value = username;
+    });
+
+    // 7. 导航菜单点击事件
     menuItems.forEach(item => {
       item.addEventListener('click', function() {
         menuItems.forEach(menu => menu.classList.remove('active'));
@@ -617,14 +743,14 @@
       });
     });
 
-    // 6. 退出登录事件
+    // 8. 退出登录事件
     logoutBtn.addEventListener('click', function() {
-      localStorage.removeItem('token'); // 清除token
+      localStorage.removeItem('token');
       alert('退出登录成功！');
-      checkLoginStatus(); // 切换回登录页
+      checkLoginStatus();
     });
 
-    // 7. 给表格操作按钮添加点击提示（可选）
+    // 9. 表格操作按钮交互
     document.addEventListener('click', function(e) {
       if (e.target.classList.contains('operate-btn')) {
         const btnType = e.target.classList[1].split('-')[0];
