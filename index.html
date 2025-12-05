@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>智慧校园公共设施管理系统</title>
-  <!-- 引入 Ant Design 样式 -->
   <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/antd/5.12.8/antd.min.css">
   <style>
     /* 全局样式 */
@@ -17,8 +16,6 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f5f5f5;
     }
-
-    /* 登录/注册页面通用样式 */
     .auth-page {
       display: flex;
       justify-content: center;
@@ -61,7 +58,6 @@
       border-color: #1890ff;
       box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
     }
-    /* 身份选择单选框样式 */
     .radio-group {
       display: flex;
       gap: 20px;
@@ -114,8 +110,6 @@
       color: #40a9ff;
       text-decoration: underline;
     }
-
-    /* 导航头部样式 */
     .nav-header {
       position: fixed;
       top: 0;
@@ -128,7 +122,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 24px;
-      display: none; /* 初始隐藏，登录后显示 */
+      display: none;
     }
     .logo {
       color: #fff;
@@ -136,8 +130,6 @@
       font-weight: bold;
       white-space: nowrap;
     }
-
-    /* 导航菜单样式 */
     .nav-menu {
       display: flex;
       margin: 0 20px;
@@ -166,24 +158,27 @@
       height: 16px;
       fill: #fff;
     }
-    /* 管理员专属菜单默认隐藏 */
     .admin-menu {
       display: none;
     }
-
-    /* 退出按钮样式 */
+    /* 退出登录按钮 - 修复排版异常 + 自适应宽度 */
     .logout-btn {
       background: #1890ff;
       color: #fff;
       border: none;
       border-radius: 4px;
-      padding: 8px 16px;
-      display: flex;
+      width: auto; /* 自适应宽度 */
+      height: 36px;
+      line-height: 36px;
+      padding: 0 16px; /* 左右内边距保证空间 */
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 8px; /* 图标与文字间距 */
       cursor: pointer;
       font-size: 14px;
       transition: background 0.2s;
+      white-space: nowrap; /* 禁止文字换行 */
     }
     .logout-btn:hover {
       background: #40a9ff;
@@ -193,8 +188,6 @@
       height: 16px;
       fill: #fff;
     }
-
-    /* 主内容区样式 */
     .main-content {
       margin-top: 84px;
       padding: 24px;
@@ -203,14 +196,13 @@
       margin-right: 24px;
       border-radius: 8px;
       min-height: 500px;
-      display: none; /* 初始隐藏，登录后显示 */
+      display: none;
     }
     .page-title {
       font-size: 20px;
       font-weight: 500;
       margin-bottom: 20px;
     }
-    /* 添加用户按钮样式 */
     .add-user-btn {
       padding: 8px 16px;
       background: #52c41a;
@@ -224,12 +216,11 @@
     .add-user-btn:hover {
       background: #73d13d;
     }
-
-    /* 通用表格样式 */
     .data-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
+      margin-bottom: 24px;
     }
     .data-table th {
       background: #fafafa;
@@ -244,8 +235,6 @@
     .data-table tr:hover {
       background: #f9f9f9;
     }
-
-    /* 状态标签样式 */
     .status-tag {
       padding: 2px 8px;
       border-radius: 4px;
@@ -259,12 +248,6 @@
       background: #fff7e6;
       color: #faad14;
     }
-    .status-broken {
-      background: #fff2f0;
-      color: #ff4d4f;
-    }
-
-    /* 操作按钮样式 */
     .operate-btn {
       padding: 4px 8px;
       border: none;
@@ -273,7 +256,7 @@
       cursor: pointer;
       margin-right: 8px;
     }
-    .edit-btn {
+    .status-btn {
       background: #e6f7ff;
       color: #1890ff;
     }
@@ -281,16 +264,50 @@
       background: #fff2f0;
       color: #ff4d4f;
     }
-    .repair-btn {
-      background: #fff7e6;
-      color: #faad14;
+    .submit-btn {
+      background: #1890ff;
+      color: #fff;
+      padding: 8px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 8px;
     }
-    .save-btn {
-      background: #f6ffed;
-      color: #52c41a;
+    .submit-btn:hover {
+      background: #40a9ff;
     }
-
-    /* 弹窗样式（添加/编辑用户） */
+    .repair-form {
+      background: #f9f9f9;
+      padding: 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      max-width: 600px;
+    }
+    .repair-form .form-item {
+      margin-bottom: 16px;
+    }
+    .repair-form label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .repair-form select, .repair-form textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .repair-form textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .disabled-select {
+      background-color: #f5f5f5;
+      color: #999;
+    }
     .modal-mask {
       position: fixed;
       top: 0;
@@ -349,7 +366,7 @@
   </style>
 </head>
 <body>
-  <!-- 登录页面（默认显示） -->
+  <!-- 登录页面 -->
   <div class="auth-page" id="login-page">
     <div class="auth-card">
       <div class="auth-title">智慧校园公共设施管理系统</div>
@@ -363,7 +380,6 @@
           <label for="login-password">密码</label>
           <input type="password" id="login-password" placeholder="请输入密码" required>
         </div>
-        <!-- 登录身份选择：管理员/老师/学生 -->
         <div class="form-item">
           <label>登录身份</label>
           <div class="radio-group">
@@ -389,7 +405,7 @@
     </div>
   </div>
 
-  <!-- 注册页面（初始隐藏） -->
+  <!-- 注册页面 -->
   <div class="auth-page" id="register-page" style="display: none;">
     <div class="auth-card">
       <div class="auth-title">用户注册</div>
@@ -411,7 +427,6 @@
           <label for="reg-phone">联系电话</label>
           <input type="tel" id="reg-phone" placeholder="请输入联系电话" required>
         </div>
-        <!-- 注册身份选择：仅老师/学生 -->
         <div class="form-item">
           <label>用户身份</label>
           <div class="radio-group">
@@ -425,7 +440,6 @@
             </div>
           </div>
         </div>
-        <!-- 新增性别字段 -->
         <div class="form-item">
           <label for="reg-gender">性别</label>
           <select id="reg-gender" required>
@@ -443,11 +457,9 @@
     </div>
   </div>
 
-  <!-- 系统主页面（初始隐藏） -->
+  <!-- 系统主页面 -->
   <header class="nav-header" id="nav-header">
     <div class="logo">智慧校园公共设施管理系统</div>
-
-    <!-- 导航菜单 -->
     <div class="nav-menu">
       <a id="menu-facility" class="menu-item active" href="javascript:;">
         <svg viewBox="64 64 896 896" focusable="false">
@@ -467,7 +479,6 @@
         </svg>
         报修管理
       </a>
-      <!-- 管理员专属：用户管理菜单 -->
       <a id="menu-user" class="menu-item admin-menu" href="javascript:;">
         <svg viewBox="64 64 896 896" focusable="false">
           <path d="M878 256H728v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H384v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H146c-17.7 0-32 14.3-32 32v664c0 17.7 14.3 32 32 32h732c17.7 0 32-14.3 32-32V288c0-17.7-14.3-32-32-32zM664 888H360c-4.4 0-8-3.6-8-8v-56c0-4.4 3.6-8 8-8h304c4.4 0 8 3.6 8 8v56c0 4.4-3.6 8-8 8zm0-168H360c-4.4 0-8-3.6-8-8v-56c0-4.4 3.6-8 8-8h304c4.4 0 8 3.6 8 8v56c0 4.4-3.6 8-8 8zm0-168H360c-4.4 0-8-3.6-8-8v-56c0-4.4 3.6-8 8-8h304c4.4 0 8 3.6 8 8v56c0 4.4-3.6 8-8 8z"/>
@@ -475,7 +486,6 @@
         用户管理
       </a>
     </div>
-
     <button id="logout-btn" class="logout-btn">
       <svg viewBox="64 64 896 896" focusable="false">
         <path d="M858.5 763.6a374 374 0 0 0-80.6-119.5 375.63 375.63 0 0 0-119.5-80.6c-4.8-.8-9.6-1.2-14.3-1.2H512c-4.7 0-9.5.4-14.3 1.2a375.63 375.63 0 0 0-119.5 80.6 374 374 0 0 0-80.6 119.5c-.8 4.8-1.2 9.6-1.2 14.3v42.8c0 27.6 22.4 50 50 50h420c27.6 0 50-22.4 50-50v-42.8c.1-4.7-.3-9.5-1.1-14.3zM512 512c79.5 0 144-64.5 144-144s-64.5-144-144-144-144 64.5-144 144 64.5 144 144 144zm0-320c105.9 0 192 86.1 192 192s-86.1 192-192 192-192-86.1-192-192 86.1-192 192-192z"/>
@@ -488,79 +498,45 @@
   <main class="main-content" id="main-content">
     <div class="page-title" id="page-title">设施列表</div>
     <div id="page-content">
-      <!-- 初始加载设施列表表格 -->
       <table class="data-table">
         <thead>
           <tr>
             <th>序号</th>
-            <th>设施名称</th>
-            <th>设施类型</th>
-            <th>安装位置</th>
-            <th>投入使用时间</th>
+            <th>设备编号</th>
+            <th>设备类型</th>
             <th>状态</th>
-            <th>操作</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>1</td>
-            <td>直饮水机</td>
+            <td>88010001</td>
             <td>饮水设备</td>
-            <td>教学楼A区1楼大厅</td>
-            <td>2023-09-01</td>
             <td><span class="status-tag status-normal">正常</span></td>
-            <td>
-              <button class="operate-btn edit-btn">编辑</button>
-              <button class="operate-btn repair-btn">报修</button>
-            </td>
           </tr>
           <tr>
             <td>2</td>
-            <td>中央空调</td>
+            <td>88010002</td>
             <td>制冷设备</td>
-            <td>图书馆3楼阅览区</td>
-            <td>2022-06-15</td>
             <td><span class="status-tag status-pending">待维修</span></td>
-            <td>
-              <button class="operate-btn edit-btn">编辑</button>
-              <button class="operate-btn delete-btn">删除</button>
-            </td>
           </tr>
           <tr>
             <td>3</td>
-            <td>LED路灯</td>
+            <td>88010003</td>
             <td>照明设备</td>
-            <td>操场西侧跑道旁</td>
-            <td>2024-03-20</td>
             <td><span class="status-tag status-normal">正常</span></td>
-            <td>
-              <button class="operate-btn edit-btn">编辑</button>
-              <button class="operate-btn repair-btn">报修</button>
-            </td>
           </tr>
           <tr>
             <td>4</td>
-            <td>多媒体投影仪</td>
+            <td>88010004</td>
             <td>教学设备</td>
-            <td>教学楼B区205教室</td>
-            <td>2021-09-01</td>
-            <td><span class="status-tag status-broken">已损坏</span></td>
-            <td>
-              <button class="operate-btn edit-btn">编辑</button>
-              <button class="operate-btn delete-btn">删除</button>
-            </td>
+            <td><span class="status-tag status-pending">待维修</span></td>
           </tr>
           <tr>
             <td>5</td>
-            <td>自动售货机</td>
+            <td>88010005</td>
             <td>便民设备</td>
-            <td>学生公寓1号楼1楼</td>
-            <td>2023-11-10</td>
             <td><span class="status-tag status-normal">正常</span></td>
-            <td>
-              <button class="operate-btn edit-btn">编辑</button>
-              <button class="operate-btn repair-btn">报修</button>
-            </td>
           </tr>
         </tbody>
       </table>
@@ -616,193 +592,223 @@
   </div>
 
   <script>
-    // 1. 初始化用户数据（管理员默认账号：admin/123456）
+    // 初始化测试数据
     if (!localStorage.getItem('registered_users')) {
       localStorage.setItem('registered_users', JSON.stringify([
-        { id: 1, username: 'admin', password: '123456', phone: '13800138000', userType: 'admin', gender: '男' }
+        { id: 1, username: 'admin', password: '123456', phone: '13800138000', userType: 'admin', gender: '男' },
+        { id: 2, username: 'student01', password: '123456', phone: '13800138001', userType: 'student', gender: '男' },
+        { id: 3, username: 'teacher01', password: '123456', phone: '13800138002', userType: 'teacher', gender: '女' }
       ]));
     }
+    if (!localStorage.getItem('facility_list')) {
+      localStorage.setItem('facility_list', JSON.stringify([
+        { id: 1, code: '88010001', type: '饮水设备', status: 1 },
+        { id: 2, code: '88010002', type: '制冷设备', status: 2 },
+        { id: 3, code: '88010003', type: '照明设备', status: 1 },
+        { id: 4, code: '88010004', type: '教学设备', status: 2 },
+        { id: 5, code: '88010005', type: '便民设备', status: 1 }
+      ]));
+    }
+    if (!localStorage.getItem('repair_records')) {
+      localStorage.setItem('repair_records', JSON.stringify([]));
+    }
 
-    // 2. 定义页面内容配置
+    // 工具函数
+    const getStatusText = (type, status) => {
+      if (type === 'facility') {
+        return status === 1 ? '正常' : '待维修';
+      } else if (type === 'repair') {
+        const map = { 1: '待处理', 2: '维修中', 3: '已完成', 4: '已驳回' };
+        return map[status] || '待处理';
+      }
+    };
+
+    const getStatusClass = (type, status) => {
+      if (type === 'facility') {
+        return status === 1 ? 'status-normal' : 'status-pending';
+      } else if (type === 'repair') {
+        const map = { 1: 'status-pending', 2: 'status-normal', 3: 'status-normal', 4: 'status-pending' };
+        return map[status] || 'status-pending';
+      }
+    };
+
+    // 核心：正确解析Token中的用户名
+    const getCurrentUser = () => {
+      const token = localStorage.getItem('token');
+      const loginType = localStorage.getItem('login_type');
+      
+      if (!token || !loginType) {
+        console.log('Token或登录类型不存在');
+        return null;
+      }
+      
+      const tokenParts = token.split('-');
+      if (tokenParts.length < 3) {
+        console.log('Token格式错误：', token);
+        return null;
+      }
+      const username = tokenParts[2]; // 用户名在索引2
+      
+      const users = JSON.parse(localStorage.getItem('registered_users') || '[]');
+      const currentUser = users.find(u => u.username === username && u.userType === loginType);
+      
+      if (!currentUser) {
+        console.log('未找到匹配的用户：', { username, loginType });
+        return null;
+      }
+      
+      return currentUser;
+    };
+
+    const getAllFacilityTypes = () => {
+      const facilities = JSON.parse(localStorage.getItem('facility_list') || '[]');
+      return [...new Set(facilities.map(f => f.type))];
+    };
+
+    const getCodesByType = (type) => {
+      const facilities = JSON.parse(localStorage.getItem('facility_list') || '[]');
+      return facilities.filter(f => f.type === type).map(f => ({ id: f.id, code: f.code }));
+    };
+
+    // 页面配置
     const pageConfig = {
       facility: {
         title: '设施列表',
-        content: `
-          <table class="data-table">
+        content: function() {
+          const facilities = JSON.parse(localStorage.getItem('facility_list') || '[]');
+          const currentUser = getCurrentUser();
+          const userType = currentUser?.userType || '';
+          
+          let html = `<table class="data-table">
             <thead>
               <tr>
                 <th>序号</th>
-                <th>设施名称</th>
-                <th>设施类型</th>
-                <th>安装位置</th>
-                <th>投入使用时间</th>
-                <th>状态</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>直饮水机</td>
-                <td>饮水设备</td>
-                <td>教学楼A区1楼大厅</td>
-                <td>2023-09-01</td>
-                <td><span class="status-tag status-normal">正常</span></td>
-                <td>
-                  <button class="operate-btn edit-btn">编辑</button>
-                  <button class="operate-btn repair-btn">报修</button>
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>中央空调</td>
-                <td>制冷设备</td>
-                <td>图书馆3楼阅览区</td>
-                <td>2022-06-15</td>
-                <td><span class="status-tag status-pending">待维修</span></td>
-                <td>
-                  <button class="operate-btn edit-btn">编辑</button>
-                  <button class="operate-btn delete-btn">删除</button>
-                </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>LED路灯</td>
-                <td>照明设备</td>
-                <td>操场西侧跑道旁</td>
-                <td>2024-03-20</td>
-                <td><span class="status-tag status-normal">正常</span></td>
-                <td>
-                  <button class="operate-btn edit-btn">编辑</button>
-                  <button class="operate-btn repair-btn">报修</button>
-                </td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>多媒体投影仪</td>
-                <td>教学设备</td>
-                <td>教学楼B区205教室</td>
-                <td>2021-09-01</td>
-                <td><span class="status-tag status-broken">已损坏</span></td>
-                <td>
-                  <button class="operate-btn edit-btn">编辑</button>
-                  <button class="operate-btn delete-btn">删除</button>
-                </td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>自动售货机</td>
-                <td>便民设备</td>
-                <td>学生公寓1号楼1楼</td>
-                <td>2023-11-10</td>
-                <td><span class="status-tag status-normal">正常</span></td>
-                <td>
-                  <button class="operate-btn edit-btn">编辑</button>
-                  <button class="operate-btn repair-btn">报修</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        `
+                <th>设备编号</th>
+                <th>设备类型</th>
+                <th>状态</th>`;
+          
+          if (userType === 'admin') {
+            html += '<th>操作</th>';
+          }
+          
+          html += `</tr></thead><tbody>`;
+          
+          facilities.forEach((item, index) => {
+            html += `<tr>
+              <td>${index + 1}</td>
+              <td>${item.code}</td>
+              <td>${item.type}</td>
+              <td><span class="status-tag ${getStatusClass('facility', item.status)}">${getStatusText('facility', item.status)}</span></td>`;
+            
+            if (userType === 'admin') {
+              html += `<td>
+                <button class="operate-btn status-btn" data-id="${item.id}" data-status="${item.status}">
+                  ${item.status === 1 ? '设为待维修' : '设为正常'}
+                </button>
+                <button class="operate-btn delete-btn" data-id="${item.id}">删除</button>
+              </td>`;
+            }
+            
+            html += `</tr>`;
+          });
+          
+          html += `</tbody></table>`;
+          return html;
+        }
       },
       add: {
         title: '添加设施',
         content: `
-          <form>
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; margin-bottom: 8px;">设施名称：</label>
-              <input type="text" placeholder="请输入设施名称" style="padding: 8px; width: 300px; border: 1px solid #d9d9d9; border-radius: 4px;">
+          <form class="repair-form" id="add-facility-form">
+            <div class="form-item">
+              <label for="facility-code">设备编号（8位数字）</label>
+              <input type="text" id="facility-code" placeholder="请输入8位数字设备编号" required pattern="\\d{8}">
             </div>
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; margin-bottom: 8px;">设施类型：</label>
-              <select style="padding: 8px; width: 300px; border: 1px solid #d9d9d9; border-radius: 4px;">
-                <option>饮水设备</option>
-                <option>制冷设备</option>
-                <option>照明设备</option>
-                <option>教学设备</option>
-                <option>便民设备</option>
+            <div class="form-item">
+              <label for="facility-type">设备类型</label>
+              <select id="facility-type" required>
+                <option value="">请选择设备类型</option>
+                <option value="饮水设备">饮水设备</option>
+                <option value="制冷设备">制冷设备</option>
+                <option value="照明设备">照明设备</option>
+                <option value="教学设备">教学设备</option>
+                <option value="便民设备">便民设备</option>
               </select>
             </div>
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; margin-bottom: 8px;">安装位置：</label>
-              <input type="text" placeholder="请输入安装位置" style="padding: 8px; width: 300px; border: 1px solid #d9d9d9; border-radius: 4px;">
-            </div>
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; margin-bottom: 8px;">投入使用时间：</label>
-              <input type="date" style="padding: 8px; width: 300px; border: 1px solid #d9d9d9; border-radius: 4px;">
-            </div>
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; margin-bottom: 8px;">初始状态：</label>
-              <select style="padding: 8px; width: 300px; border: 1px solid #d9d9d9; border-radius: 4px;">
-                <option>正常</option>
-                <option>待维修</option>
-                <option>已损坏</option>
-              </select>
-            </div>
-            <button type="button" style="background: #1890ff; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">提交</button>
+            <button type="submit" class="submit-btn">提交添加</button>
           </form>
         `
       },
       repair: {
         title: '报修管理',
-        content: `
-          <table class="data-table">
+        content: function() {
+          const facilities = JSON.parse(localStorage.getItem('facility_list') || '[]');
+          const repairRecords = JSON.parse(localStorage.getItem('repair_records') || '[]');
+          const currentUser = getCurrentUser();
+          const userId = currentUser?.id || 0;
+          const facilityTypes = getAllFacilityTypes();
+          
+          let html = `<div class="repair-form">
+            <h3 style="margin-bottom: 16px;">报修申请</h3>
+            <form id="repair-apply-form">
+              <div class="form-item">
+                <label for="repair-type">设备类型</label>
+                <select id="repair-type" required>
+                  <option value="">请选择设备类型</option>
+                  ${facilityTypes.map(type => `<option value="${type}">${type}</option>`).join('')}
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="repair-code">设备编号</label>
+                <select id="repair-code" class="disabled-select" disabled required>
+                  <option value="">请先选择设备类型</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="repair-reason">报修原因</label>
+                <textarea id="repair-reason" placeholder="请详细描述设备故障情况..." required></textarea>
+              </div>
+              <button type="submit" class="submit-btn">提交报修</button>
+            </form>
+          </div>`;
+          
+          html += `<h3 style="margin-bottom: 16px;">我的报修记录</h3>`;
+          html += `<table class="data-table">
             <thead>
-              <tr style="background: #fafafa;">
+              <tr>
                 <th>工单编号</th>
-                <th>设施名称</th>
-                <th>设施类型</th>
-                <th>报修人</th>
+                <th>设备编号</th>
+                <th>设备类型</th>
                 <th>报修时间</th>
+                <th>报修原因</th>
                 <th>状态</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>BX20251205001</td>
-                <td>图书馆空调</td>
-                <td>制冷设备</td>
-                <td>张三</td>
-                <td>2025-12-05 09:20</td>
-                <td><span class="status-tag status-pending">待处理</span></td>
-                <td>
-                  <button class="operate-btn edit-btn">处理</button>
-                  <button class="operate-btn delete-btn">关闭</button>
-                </td>
-              </tr>
-              <tr>
-                <td>BX20251205002</td>
-                <td>教学楼B区电灯</td>
-                <td>照明设备</td>
-                <td>李四</td>
-                <td>2025-12-05 10:15</td>
-                <td><span class="status-tag status-normal">维修中</span></td>
-                <td>
-                  <button class="operate-btn edit-btn">完成</button>
-                  <button class="operate-btn repair-btn">派单</button>
-                </td>
-              </tr>
-              <tr>
-                <td>BX20251204001</td>
-                <td>多媒体投影仪</td>
-                <td>教学设备</td>
-                <td>王五</td>
-                <td>2025-12-04 14:30</td>
-                <td><span class="status-tag status-broken">已驳回</span></td>
-                <td>
-                  <button class="operate-btn edit-btn">重新提交</button>
-                  <button class="operate-btn delete-btn">删除</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        `
+              </tr></thead><tbody>`;
+          
+          const filteredRecords = repairRecords.filter(r => r.repairUserId === userId);
+          
+          if (filteredRecords.length === 0) {
+            html += `<tr><td colspan="6" style="text-align:center;">暂无报修记录</td></tr>`;
+          } else {
+            filteredRecords.forEach(record => {
+              const facility = facilities.find(f => f.id === record.facilityId) || { code: '未知', type: '未知' };
+              html += `<tr data-id="${record.id}">
+                <td>${record.orderNo}</td>
+                <td>${facility.code}</td>
+                <td>${facility.type}</td>
+                <td>${record.repairTime}</td>
+                <td>${record.reason}</td>
+                <td><span class="status-tag ${getStatusClass('repair', record.status)}">${getStatusText('repair', record.status)}</span></td>
+              </tr>`;
+            });
+          }
+          
+          html += `</tbody></table>`;
+          return html;
+        }
       },
       user: {
         title: '用户管理',
         content: function() {
-          // 动态生成用户管理页面（含添加按钮+用户表格）
           const users = JSON.parse(localStorage.getItem('registered_users') || '[]');
           let html = `<button class="add-user-btn" id="add-user-btn">添加用户</button>`;
           html += `
@@ -820,7 +826,7 @@
               <tbody>
           `;
           users.forEach(user => {
-            if (user.userType !== 'admin') { // 不显示管理员自身
+            if (user.userType !== 'admin') {
               html += `
                 <tr data-id="${user.id}">
                   <td>${user.id}</td>
@@ -829,7 +835,7 @@
                   <td>${user.userType === 'teacher' ? '老师' : '学生'}</td>
                   <td>${user.gender}</td>
                   <td>
-                    <button class="operate-btn edit-btn edit-user-btn">编辑</button>
+                    <button class="operate-btn status-btn edit-user-btn">编辑</button>
                     <button class="operate-btn delete-btn delete-user-btn">删除</button>
                   </td>
                 </tr>
@@ -845,137 +851,354 @@
       }
     };
 
-    // 3. DOM元素获取
+    // DOM元素获取
     const loginPage = document.getElementById('login-page');
     const registerPage = document.getElementById('register-page');
     const navHeader = document.getElementById('nav-header');
     const mainContent = document.getElementById('main-content');
     const userModal = document.getElementById('user-modal');
-    
-    // 登录相关元素
     const loginForm = document.getElementById('login-form');
-    const loginError = document.getElementById('login-error');
-    const loginUsername = document.getElementById('login-username');
-    const loginPassword = document.getElementById('login-password');
-    const loginTypeRadios = document.querySelectorAll('input[name="login-type"]');
-    
-    // 注册相关元素
     const registerForm = document.getElementById('register-form');
-    const registerError = document.getElementById('register-error');
-    const regUsername = document.getElementById('reg-username');
-    const regPassword = document.getElementById('reg-password');
-    const regRepassword = document.getElementById('reg-repassword');
-    const regPhone = document.getElementById('reg-phone');
-    const regTypeRadios = document.querySelectorAll('input[name="reg-type"]');
-    const regGender = document.getElementById('reg-gender');
-    
-    // 切换按钮
     const toRegister = document.getElementById('to-register');
     const toLogin = document.getElementById('to-login');
-    
-    // 菜单元素
     const menuItems = document.querySelectorAll('.menu-item');
-    const adminMenu = document.querySelector('.admin-menu');
     const logoutBtn = document.getElementById('logout-btn');
     const pageTitle = document.getElementById('page-title');
     const pageContent = document.getElementById('page-content');
-    
-    // 弹窗相关元素
-    const modalTitle = document.getElementById('modal-title');
-    const userForm = document.getElementById('user-form');
-    const userIdInput = document.getElementById('user-id');
-    const modalUsername = document.getElementById('modal-username');
-    const modalPassword = document.getElementById('modal-password');
-    const modalPhone = document.getElementById('modal-phone');
-    const modalTypeRadios = document.querySelectorAll('input[name="modal-type"]');
-    const modalGender = document.getElementById('modal-gender');
     const cancelBtn = document.getElementById('cancel-btn');
 
-    // 4. 登录/注册页面切换逻辑
-    toRegister.addEventListener('click', function() {
+    // 登录/注册切换
+    toRegister.addEventListener('click', () => {
       loginPage.style.display = 'none';
       registerPage.style.display = 'flex';
-      registerError.style.display = 'none';
-      // 默认选中老师身份+男
+      document.getElementById('register-error').style.display = 'none';
       document.getElementById('reg-teacher').checked = true;
-      regGender.value = '男';
+      document.getElementById('reg-gender').value = '男';
     });
 
-    toLogin.addEventListener('click', function() {
+    toLogin.addEventListener('click', () => {
       registerPage.style.display = 'none';
       loginPage.style.display = 'flex';
-      loginError.style.display = 'none';
-      // 默认选中管理员身份
+      document.getElementById('login-error').style.display = 'none';
       document.getElementById('login-admin').checked = true;
     });
 
-    // 5. 权限控制：根据登录身份显示/隐藏菜单
-    function setMenuPermission(loginType) {
-      // 管理员：显示所有菜单（含用户管理），老师/学生：隐藏添加设施+用户管理
-      adminMenu.style.display = loginType === 'admin' ? 'flex' : 'none';
-      document.getElementById('menu-add').style.display = loginType === 'student' ? 'none' : 'flex';
-    }
-
-    // 6. 初始化检查登录状态
-    function checkLoginStatus() {
-      const token = localStorage.getItem('token');
-      const loginType = localStorage.getItem('login_type');
-      if (token && loginType) {
-        // 已登录：显示系统页面，设置菜单权限
-        loginPage.style.display = 'none';
-        registerPage.style.display = 'none';
-        navHeader.style.display = 'flex';
-        mainContent.style.display = 'block';
-        setMenuPermission(loginType);
-        // 默认显示设施列表
-        renderPage('facility');
+    // 登录提交
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      const loginType = Array.from(document.querySelectorAll('input[name="login-type"]')).find(r => r.checked)?.value;
+      
+      const users = JSON.parse(localStorage.getItem('registered_users') || '[]');
+      const user = users.find(u => u.username === username && u.password === password && u.userType === loginType);
+      
+      if (user) {
+        localStorage.setItem('token', `fake-token-${username}-${Date.now()}`);
+        localStorage.setItem('login_type', loginType);
+        checkLoginStatus();
+        alert(`登录成功！欢迎${loginType === 'admin' ? '管理员' : loginType === 'teacher' ? '老师' : '学生'} ${username}`);
       } else {
-        // 未登录：显示登录页
-        loginPage.style.display = 'flex';
-        registerPage.style.display = 'none';
-        navHeader.style.display = 'none';
-        mainContent.style.display = 'none';
+        document.getElementById('login-error').textContent = '用户名/密码/身份不匹配';
+        document.getElementById('login-error').style.display = 'block';
       }
-    }
+    });
 
-    // 7. 页面渲染函数
+    // 注册提交
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value.trim();
+      const repassword = document.getElementById('reg-repassword').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
+      const regType = Array.from(document.querySelectorAll('input[name="reg-type"]')).find(r => r.checked)?.value;
+      const gender = document.getElementById('reg-gender').value;
+      
+      const users = JSON.parse(localStorage.getItem('registered_users') || '[]');
+      const errorEl = document.getElementById('register-error');
+      
+      if (username.length < 3 || username.length > 16) {
+        errorEl.textContent = '用户名长度需在3-16位之间';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (password.length < 6 || password.length > 16) {
+        errorEl.textContent = '密码长度需在6-16位之间';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (password !== repassword) {
+        errorEl.textContent = '两次输入的密码不一致';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (!/^1[3-9]\d{9}$/.test(phone)) {
+        errorEl.textContent = '请输入有效的手机号码';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (!gender) {
+        errorEl.textContent = '请选择性别';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (users.some(u => u.username === username)) {
+        errorEl.textContent = '用户名已存在，请更换';
+        errorEl.style.display = 'block';
+        return;
+      }
+      
+      const newUserId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 2;
+      users.push({
+        id: newUserId,
+        username,
+        password,
+        phone,
+        userType: regType,
+        gender
+      });
+      localStorage.setItem('registered_users', JSON.stringify(users));
+      alert(`注册成功！您的身份是：${regType === 'teacher' ? '老师' : '学生'}`);
+      toLogin.click();
+      document.getElementById('login-username').value = username;
+    });
+
+    // 退出登录
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('login_type');
+      checkLoginStatus();
+      alert('退出登录成功！');
+    });
+
+    // 菜单点击
+    menuItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const pageKey = item.id.split('-')[1];
+        const currentUser = getCurrentUser();
+        const userType = currentUser?.userType || '';
+        
+        if (userType === 'admin' && pageKey === 'repair') {
+          alert('管理员无报修管理权限！');
+          return;
+        }
+        
+        renderPage(pageKey);
+      });
+    });
+
+    // 渲染页面
     function renderPage(pageKey) {
-      // 重置菜单激活状态
+      const currentUser = getCurrentUser();
+      const userType = currentUser?.userType || '';
+      
+      if (userType === 'admin' && pageKey === 'repair') {
+        renderPage('facility');
+        return;
+      }
+      
       menuItems.forEach(item => item.classList.remove('active'));
       document.getElementById(`menu-${pageKey}`).classList.add('active');
-      
-      // 设置页面标题和内容
       pageTitle.textContent = pageConfig[pageKey].title;
       pageContent.innerHTML = typeof pageConfig[pageKey].content === 'function' 
         ? pageConfig[pageKey].content() 
         : pageConfig[pageKey].content;
       
-      // 绑定用户管理页面的按钮事件
-      if (pageKey === 'user') {
+      if (pageKey === 'repair') {
+        bindRepairEvents();
+      } else if (pageKey === 'add') {
+        bindAddFacilityEvents();
+      } else if (pageKey === 'user') {
         bindUserManageEvents();
+      } else if (pageKey === 'facility') {
+        bindFacilityEvents();
       }
     }
 
-    // 8. 绑定用户管理相关事件
+    // 绑定设施列表事件
+    function bindFacilityEvents() {
+      document.querySelectorAll('.status-btn[data-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const facilityId = parseInt(btn.dataset.id);
+          const currentStatus = parseInt(btn.dataset.status);
+          const newStatus = currentStatus === 1 ? 2 : 1;
+          
+          if (confirm(`确定要将该设备状态改为【${getStatusText('facility', newStatus)}】吗？`)) {
+            const facilities = JSON.parse(localStorage.getItem('facility_list') || '[]');
+            const index = facilities.findIndex(f => f.id === facilityId);
+            if (index !== -1) {
+              facilities[index].status = newStatus;
+              localStorage.setItem('facility_list', JSON.stringify(facilities));
+              renderPage('facility');
+              alert('设备状态修改成功！');
+            }
+          }
+        });
+      });
+      
+      document.querySelectorAll('.delete-btn[data-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const facilityId = parseInt(btn.dataset.id);
+          if (confirm('确定要删除该设备吗？删除后相关报修记录也会失效！')) {
+            let facilities = JSON.parse(localStorage.getItem('facility_list') || '[]');
+            facilities = facilities.filter(f => f.id !== facilityId);
+            localStorage.setItem('facility_list', JSON.stringify(facilities));
+            renderPage('facility');
+            alert('设备删除成功！');
+          }
+        });
+      });
+    }
+
+    // 绑定报修事件
+    function bindRepairEvents() {
+      const typeSelect = document.getElementById('repair-type');
+      const codeSelect = document.getElementById('repair-code');
+      
+      if (typeSelect && codeSelect) {
+        typeSelect.addEventListener('change', () => {
+          const selectedType = typeSelect.value;
+          codeSelect.innerHTML = '';
+          
+          if (!selectedType) {
+            codeSelect.innerHTML = '<option value="">请先选择设备类型</option>';
+            codeSelect.disabled = true;
+            codeSelect.classList.add('disabled-select');
+            return;
+          }
+          
+          const codeList = getCodesByType(selectedType);
+          codeSelect.disabled = false;
+          codeSelect.classList.remove('disabled-select');
+          
+          if (codeList.length === 0) {
+            codeSelect.innerHTML = '<option value="">该类型暂无设备</option>';
+            return;
+          }
+          
+          codeSelect.innerHTML = '<option value="">请选择设备编号</option>' + 
+            codeList.map(item => `<option value="${item.id}">${item.code}</option>`).join('');
+        });
+      }
+      
+      // 报修提交
+      const repairForm = document.getElementById('repair-apply-form');
+      if (repairForm) {
+        repairForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          console.log('提交报修 - 验证登录状态');
+          
+          const currentUser = getCurrentUser();
+          if (!currentUser) {
+            alert('登录状态失效，请重新登录！');
+            localStorage.removeItem('token');
+            localStorage.removeItem('login_type');
+            checkLoginStatus();
+            return;
+          }
+          
+          const selectedType = document.getElementById('repair-type').value;
+          const selectedCodeId = document.getElementById('repair-code').value;
+          const reason = document.getElementById('repair-reason').value.trim();
+          
+          if (!selectedType) {
+            alert('请选择设备类型！');
+            typeSelect.focus();
+            return;
+          }
+          
+          if (!selectedCodeId) {
+            alert('请选择设备编号！');
+            codeSelect.focus();
+            return;
+          }
+          
+          if (!reason) {
+            alert('请填写报修原因！');
+            document.getElementById('repair-reason').focus();
+            return;
+          }
+          
+          const facilityId = parseInt(selectedCodeId);
+          const repairUserId = currentUser.id;
+          const date = new Date();
+          const repairRecords = JSON.parse(localStorage.getItem('repair_records') || '[]');
+          const seq = String(repairRecords.length + 1).padStart(3, '0');
+          const orderNo = `BX${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}${seq}`;
+          
+          const newRepair = {
+            id: repairRecords.length + 1,
+            orderNo,
+            facilityId,
+            repairUserId,
+            repairTime: date.toLocaleString(),
+            reason,
+            status: 1
+          };
+          
+          repairRecords.push(newRepair);
+          localStorage.setItem('repair_records', JSON.stringify(repairRecords));
+          
+          alert('报修申请提交成功！');
+          renderPage('repair');
+        });
+      }
+    }
+
+    // 绑定添加设施事件
+    function bindAddFacilityEvents() {
+      const addForm = document.getElementById('add-facility-form');
+      if (addForm) {
+        addForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const code = document.getElementById('facility-code').value.trim();
+          const type = document.getElementById('facility-type').value;
+          
+          if (!/^\d{8}$/.test(code)) {
+            alert('设备编号必须是8位数字！');
+            return;
+          }
+          if (!type) {
+            alert('请选择设备类型！');
+            return;
+          }
+          
+          const facilities = JSON.parse(localStorage.getItem('facility_list') || '[]');
+          if (facilities.some(f => f.code === code)) {
+            alert('该设备编号已存在，请更换！');
+            return;
+          }
+          
+          facilities.push({
+            id: facilities.length + 1,
+            code,
+            type,
+            status: 1
+          });
+          localStorage.setItem('facility_list', JSON.stringify(facilities));
+          alert('设备添加成功！');
+          renderPage('facility');
+        });
+      }
+    }
+
+    // 绑定用户管理事件
     function bindUserManageEvents() {
-      // 添加用户按钮
-      document.getElementById('add-user-btn')?.addEventListener('click', function() {
+      document.getElementById('add-user-btn')?.addEventListener('click', () => {
         openUserModal();
       });
       
-      // 编辑用户按钮
       document.querySelectorAll('.edit-user-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const tr = this.closest('tr');
+        btn.addEventListener('click', () => {
+          const tr = btn.closest('tr');
           const userId = tr.dataset.id;
           openUserModal(userId);
         });
       });
       
-      // 删除用户按钮
       document.querySelectorAll('.delete-user-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const tr = this.closest('tr');
+        btn.addEventListener('click', () => {
+          const tr = btn.closest('tr');
           const userId = parseInt(tr.dataset.id);
           const username = tr.querySelector('td:nth-child(2)').textContent;
           
@@ -983,7 +1206,6 @@
             let users = JSON.parse(localStorage.getItem('registered_users') || '[]');
             users = users.filter(user => user.id !== userId);
             localStorage.setItem('registered_users', JSON.stringify(users));
-            // 重新渲染用户管理页面
             renderPage('user');
             alert('用户删除成功！');
           }
@@ -991,267 +1213,130 @@
       });
     }
 
-    // 9. 打开用户弹窗（添加/编辑）
+    // 打开用户弹窗
     function openUserModal(userId = null) {
       userModal.style.display = 'flex';
-      // 清空表单
+      const userForm = document.getElementById('user-form');
       userForm.reset();
+      const modalTitle = document.getElementById('modal-title');
       
       if (userId) {
-        // 编辑模式
         modalTitle.textContent = '编辑用户';
         const users = JSON.parse(localStorage.getItem('registered_users') || '[]');
         const user = users.find(u => u.id === parseInt(userId));
         if (user) {
-          userIdInput.value = user.id;
-          modalUsername.value = user.username;
-          modalPhone.value = user.phone;
-          modalGender.value = user.gender;
-          // 选中身份
-          if (user.userType === 'teacher') {
-            document.getElementById('modal-teacher').checked = true;
-          } else {
-            document.getElementById('modal-student').checked = true;
-          }
-          // 密码框置空（编辑时留空不修改）
-          modalPassword.placeholder = '留空则不修改密码';
+          document.getElementById('user-id').value = user.id;
+          document.getElementById('modal-username').value = user.username;
+          document.getElementById('modal-phone').value = user.phone;
+          document.getElementById('modal-gender').value = user.gender;
+          user.userType === 'teacher' ? document.getElementById('modal-teacher').checked = true : document.getElementById('modal-student').checked = true;
         }
       } else {
-        // 添加模式
         modalTitle.textContent = '添加用户';
-        userIdInput.value = '';
-        // 默认选中老师+男
         document.getElementById('modal-teacher').checked = true;
-        modalGender.value = '男';
-        modalPassword.placeholder = '请输入密码（6-16位）';
+        document.getElementById('modal-gender').value = '男';
+      }
+      
+      userForm.onsubmit = function(e) {
+        e.preventDefault();
+        const userId = document.getElementById('user-id').value;
+        const username = document.getElementById('modal-username').value.trim();
+        const password = document.getElementById('modal-password').value.trim();
+        const phone = document.getElementById('modal-phone').value.trim();
+        const userType = Array.from(document.querySelectorAll('input[name="modal-type"]')).find(r => r.checked)?.value;
+        const gender = document.getElementById('modal-gender').value;
+        
+        if (username.length < 3 || username.length > 16) {
+          alert('用户名长度需在3-16位之间！');
+          return;
+        }
+        if (!userId && !password) {
+          alert('添加用户必须填写密码！');
+          return;
+        }
+        if (password && (password.length < 6 || password.length > 16)) {
+          alert('密码长度需在6-16位之间！');
+          return;
+        }
+        if (!/^1[3-9]\d{9}$/.test(phone)) {
+          alert('请输入有效的手机号码！');
+          return;
+        }
+        if (!gender) {
+          alert('请选择性别！');
+          return;
+        }
+        
+        let users = JSON.parse(localStorage.getItem('registered_users') || '[]');
+        if (userId) {
+          const index = users.findIndex(u => u.id === parseInt(userId));
+          if (index !== -1) {
+            users[index].username = username;
+            users[index].phone = phone;
+            users[index].userType = userType;
+            users[index].gender = gender;
+            if (password) users[index].password = password;
+            localStorage.setItem('registered_users', JSON.stringify(users));
+            alert('用户编辑成功！');
+          }
+        } else {
+          if (users.some(u => u.username === username)) {
+            alert('用户名已存在！');
+            return;
+          }
+          const newUserId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 2;
+          users.push({
+            id: newUserId,
+            username,
+            password,
+            phone,
+            userType,
+            gender
+          });
+          localStorage.setItem('registered_users', JSON.stringify(users));
+          alert('用户添加成功！');
+        }
+        
+        userModal.style.display = 'none';
+        renderPage('user');
+      };
+    }
+
+    // 取消弹窗
+    cancelBtn.addEventListener('click', () => {
+      userModal.style.display = 'none';
+    });
+
+    // 检查登录状态
+    function checkLoginStatus() {
+      const token = localStorage.getItem('token');
+      const loginType = localStorage.getItem('login_type');
+      
+      if (token && loginType) {
+        loginPage.style.display = 'none';
+        registerPage.style.display = 'none';
+        navHeader.style.display = 'flex';
+        mainContent.style.display = 'block';
+        
+        const currentUser = getCurrentUser();
+        const userType = currentUser?.userType || '';
+        
+        document.querySelector('.admin-menu').style.display = userType === 'admin' ? 'flex' : 'none';
+        document.getElementById('menu-add').style.display = userType === 'admin' ? 'flex' : 'none';
+        document.getElementById('menu-repair').style.display = userType === 'admin' ? 'none' : 'flex';
+        
+        renderPage('facility');
+      } else {
+        loginPage.style.display = 'flex';
+        registerPage.style.display = 'none';
+        navHeader.style.display = 'none';
+        mainContent.style.display = 'none';
       }
     }
 
-    // 10. 登录表单提交事件
-    loginForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const username = loginUsername.value.trim();
-      const password = loginPassword.value.trim();
-      let loginType = '';
-      for (const radio of loginTypeRadios) {
-        if (radio.checked) {
-          loginType = radio.value;
-          break;
-        }
-      }
-      
-      // 验证登录信息
-      const users = JSON.parse(localStorage.getItem('registered_users') || '[]');
-      const user = users.find(u => u.username === username && u.password === password && u.userType === loginType);
-      
-      if (user || (username === 'admin' && password === '123456' && loginType === 'admin')) {
-        // 登录成功
-        localStorage.setItem('token', 'fake-token-' + Date.now());
-        localStorage.setItem('login_type', loginType);
-        loginError.style.display = 'none';
-        alert(`登录成功！您的身份是：${loginType === 'admin' ? '管理员' : loginType === 'teacher' ? '老师' : '学生'}`);
-        checkLoginStatus();
-      } else {
-        // 登录失败
-        loginError.textContent = '用户名/密码/身份不匹配';
-        loginError.style.display = 'block';
-      }
-    });
-
-    // 11. 注册表单提交事件
-    registerForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const username = regUsername.value.trim();
-      const password = regPassword.value.trim();
-      const repassword = regRepassword.value.trim();
-      const phone = regPhone.value.trim();
-      let regType = '';
-      for (const radio of regTypeRadios) {
-        if (radio.checked) {
-          regType = radio.value;
-          break;
-        }
-      }
-      const gender = regGender.value;
-      
-      // 表单验证
-      if (username.length < 3 || username.length > 16) {
-        registerError.textContent = '用户名长度需在3-16位之间';
-        registerError.style.display = 'block';
-        return;
-      }
-      if (password.length < 6 || password.length > 16) {
-        registerError.textContent = '密码长度需在6-16位之间';
-        registerError.style.display = 'block';
-        return;
-      }
-      if (password !== repassword) {
-        registerError.textContent = '两次输入的密码不一致';
-        registerError.style.display = 'block';
-        return;
-      }
-      if (!/^1[3-9]\d{9}$/.test(phone)) {
-        registerError.textContent = '请输入有效的手机号码';
-        registerError.style.display = 'block';
-        return;
-      }
-      if (!gender) {
-        registerError.textContent = '请选择性别';
-        registerError.style.display = 'block';
-        return;
-      }
-      // 检查用户名是否重复
-      const users = JSON.parse(localStorage.getItem('registered_users') || '[]');
-      if (users.some(u => u.username === username)) {
-        registerError.textContent = '用户名已存在，请更换';
-        registerError.style.display = 'block';
-        return;
-      }
-      
-      // 注册成功：生成用户ID，存储信息
-      const newUserId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 2; // 管理员ID=1
-      const newUser = {
-        id: newUserId,
-        username,
-        password,
-        phone,
-        userType: regType,
-        gender
-      };
-      users.push(newUser);
-      localStorage.setItem('registered_users', JSON.stringify(users));
-      
-      alert(`注册成功！您的身份是：${regType === 'teacher' ? '老师' : '学生'}`);
-      toLogin.click();
-      loginUsername.value = username;
-    });
-
-    // 12. 用户表单提交事件（添加/编辑）
-    userForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const userId = userIdInput.value;
-      const username = modalUsername.value.trim();
-      const password = modalPassword.value.trim();
-      const phone = modalPhone.value.trim();
-      let userType = '';
-      for (const radio of modalTypeRadios) {
-        if (radio.checked) {
-          userType = radio.value;
-          break;
-        }
-      }
-      const gender = modalGender.value;
-      
-      // 验证
-      if (username.length < 3 || username.length > 16) {
-        alert('用户名长度需在3-16位之间');
-        return;
-      }
-      if (!userId && !password) { // 添加用户必须填密码
-        alert('请输入密码');
-        return;
-      }
-      if (password && (password.length < 6 || password.length > 16)) {
-        alert('密码长度需在6-16位之间');
-        return;
-      }
-      if (!/^1[3-9]\d{9}$/.test(phone)) {
-        alert('请输入有效的手机号码');
-        return;
-      }
-      if (!gender) {
-        alert('请选择性别');
-        return;
-      }
-      
-      let users = JSON.parse(localStorage.getItem('registered_users') || '[]');
-      
-      if (userId) {
-        // 编辑用户
-        const index = users.findIndex(u => u.id === parseInt(userId));
-        if (index !== -1) {
-          users[index].username = username;
-          users[index].phone = phone;
-          users[index].userType = userType;
-          users[index].gender = gender;
-          // 密码留空则不修改
-          if (password) {
-            users[index].password = password;
-          }
-          localStorage.setItem('registered_users', JSON.stringify(users));
-          alert('用户信息编辑成功！');
-        }
-      } else {
-        // 添加用户：检查用户名重复
-        if (users.some(u => u.username === username)) {
-          alert('用户名已存在，请更换');
-          return;
-        }
-        const newUserId = Math.max(...users.map(u => u.id)) + 1;
-        users.push({
-          id: newUserId,
-          username,
-          password,
-          phone,
-          userType,
-          gender
-        });
-        localStorage.setItem('registered_users', JSON.stringify(users));
-        alert('用户添加成功！');
-      }
-      
-      // 关闭弹窗，重新渲染用户管理页面
-      userModal.style.display = 'none';
-      renderPage('user');
-    });
-
-    // 13. 取消按钮事件
-    cancelBtn.addEventListener('click', function() {
-      userModal.style.display = 'none';
-    });
-
-    // 14. 导航菜单点击事件
-    menuItems.forEach(item => {
-      item.addEventListener('click', function() {
-        const pageKey = this.id.split('-')[1];
-        renderPage(pageKey);
-      });
-    });
-
-    // 15. 退出登录事件
-    logoutBtn.addEventListener('click', function() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('login_type');
-      alert('退出登录成功！');
+    // 初始化
+    window.onload = () => {
       checkLoginStatus();
-    });
-
-    // 16. 表格通用操作按钮事件
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('operate-btn') && !e.target.classList.contains('edit-user-btn') && !e.target.classList.contains('delete-user-btn')) {
-        const btnType = e.target.classList[1].split('-')[0];
-        const facilityName = e.target.closest('tr')?.querySelector('td:nth-child(2)')?.textContent;
-        if (facilityName) {
-          if (btnType === 'edit') {
-            alert(`即将编辑【${facilityName}】的信息`);
-          } else if (btnType === 'delete') {
-            if (confirm(`确定要删除【${facilityName}】的记录吗？`)) {
-              alert(`已删除【${facilityName}】的记录`);
-            }
-          } else if (btnType === 'repair') {
-            alert(`即将提交【${facilityName}】的报修申请`);
-          }
-        }
-      }
-    });
-
-    // 页面加载时初始化
-    window.onload = function() {
-      checkLoginStatus();
-      // 默认选中登录页的管理员身份
       document.getElementById('login-admin').checked = true;
     };
   </script>
