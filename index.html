@@ -6,7 +6,6 @@
   <title>智慧校园公共设施管理系统</title>
   <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/antd/5.12.8/antd.min.css">
   <style>
-    /* 100%保留原CSS，无任何修改 */
     * {
       margin: 0;
       padding: 0;
@@ -365,7 +364,6 @@
   </style>
 </head>
 <body>
-  <!-- DOM结构100%保留，无任何修改 -->
   <div class="auth-page" id="login-page">
     <div class="auth-card">
       <div class="auth-title">智慧校园公共设施管理系统</div>
@@ -403,7 +401,6 @@
       </form>
     </div>
   </div>
-
   <div class="auth-page" id="register-page" style="display: none;">
     <div class="auth-card">
       <div class="auth-title">用户注册</div>
@@ -453,7 +450,6 @@
       </form>
     </div>
   </div>
-
   <header class="nav-header" id="nav-header">
     <div class="logo">智慧校园公共设施管理系统</div>
     <div class="nav-menu">
@@ -489,12 +485,10 @@
       退出登录
     </button>
   </header>
-
   <main class="main-content" id="main-content">
     <div class="page-title" id="page-title">设施列表</div>
     <div id="page-content"></div>
   </main>
-
   <div class="modal-mask" id="user-modal">
     <div class="modal-card">
       <div class="modal-title" id="modal-title">添加用户</div>
@@ -535,20 +529,22 @@
         </div>
         <div class="modal-btn-group">
           <button type="button" class="modal-btn cancel-btn" id="cancel-btn">取消</button>
-          <button type="submit" class="modal-btn confirm-btn">保存</button>
+          <button type="button" class="modal-btn confirm-btn" id="save-user-btn">保存</button>
         </div>
       </form>
     </div>
   </div>
-
   <script>
-    // 仅修改数据逻辑，交互体验完全保留
+    // 后端接口基础地址（根据实际部署地址修改）
     const BASE_API = 'http://localhost:5000/api';
+    
+    // 获取请求头（携带token）
     const getAuthHeaders = () => ({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
-
+    
+    // 状态文本转换
     const getStatusText = (type, status) => {
       if (type === 'facility') {
         return status === 1 ? '正常' : '待维修';
@@ -557,7 +553,8 @@
         return map[status] || '待处理';
       }
     };
-
+    
+    // 状态样式类转换
     const getStatusClass = (type, status) => {
       if (type === 'facility') {
         return status === 1 ? 'status-normal' : 'status-pending';
@@ -566,7 +563,8 @@
         return map[status] || 'status-pending';
       }
     };
-
+    
+    // 获取当前登录用户信息
     const getCurrentUser = async () => {
       const token = localStorage.getItem('token');
       const loginType = localStorage.getItem('login_type');
@@ -575,19 +573,25 @@
         const res = await fetch(`${BASE_API}/users/info`, { headers: getAuthHeaders() });
         const data = await res.json();
         if (data.success) return { ...data.data, userType: loginType };
-        return null;
+        alert(`获取用户信息失败：${data.message || '网络异常'}`);
+        return { userType: loginType };
       } catch (err) {
         console.error('获取用户信息失败：', err);
-        return null;
+        alert('获取用户信息失败，可能是网络问题');
+        return { userType: loginType };
       }
     };
-
+    
+    // 页面配置（核心修改：地点相关渲染和提交）
     const pageConfig = {
       facility: {
         title: '设施列表',
         content: async function() {
           try {
-            const res = await fetch(`${BASE_API}/facilities`);
+            // 强制携带token请求设施列表
+            const res = await fetch(`${BASE_API}/facilities`, {
+              headers: getAuthHeaders() // 新增：添加认证头，确保能获取完整数据
+            });
             const data = await res.json();
             if (!data.success) throw new Error(data.message);
             
@@ -595,15 +599,22 @@
             const userType = currentUser?.userType || '';
             let html = `<table class="data-table">
               <thead><tr>
-                <th>序号</th><th>设备编号</th><th>设备类型</th><th>状态</th>`;
+                <th>序号</th>
+                <th>设备编号</th>
+                <th>设备类型</th>
+                <th>所在地点</th>
+                <th>状态</th>`;
             if (userType === 'admin') html += '<th>操作</th>';
             html += `</tr></thead><tbody>`;
             
             data.data.forEach((item, index) => {
+              // 强制读取location字段，空值显示“未填写”
+              const location = item.location?.trim() || '未填写';
               html += `<tr>
                 <td>${index + 1}</td>
                 <td>${item.code}</td>
                 <td>${item.type}</td>
+                <td>${location}</td> <!-- 确保地点显示 -->
                 <td><span class="status-tag ${getStatusClass('facility', item.status)}">${getStatusText('facility', item.status)}</span></td>`;
               if (userType === 'admin') {
                 html += `<td>
@@ -624,26 +635,33 @@
       },
       add: {
         title: '添加设施',
-        content: `
-          <form class="repair-form" id="add-facility-form">
-            <div class="form-item">
-              <label for="facility-code">设备编号（8位数字）</label>
-              <input type="text" id="facility-code" placeholder="请输入8位数字设备编号" required pattern="\\d{8}">
-            </div>
-            <div class="form-item">
-              <label for="facility-type">设备类型</label>
-              <select id="facility-type" required>
-                <option value="">请选择设备类型</option>
-                <option value="饮水设备">饮水设备</option>
-                <option value="制冷设备">制冷设备</option>
-                <option value="照明设备">照明设备</option>
-                <option value="教学设备">教学设备</option>
-                <option value="便民设备">便民设备</option>
-              </select>
-            </div>
-            <button type="submit" class="submit-btn">提交添加</button>
-          </form>
-        `
+        content: function() {
+          return `
+            <form class="repair-form" id="add-facility-form">
+              <div class="form-item">
+                <label for="facility-code">设备编号（8位数字）</label>
+                <input type="text" id="facility-code" placeholder="请输入8位数字设备编号" required pattern="\\d{8}">
+              </div>
+              <div class="form-item">
+                <label for="facility-type">设备类型</label>
+                <select id="facility-type" required>
+                  <option value="">请选择设备类型</option>
+                  <option value="饮水设备">饮水设备</option>
+                  <option value="制冷设备">制冷设备</option>
+                  <option value="照明设备">照明设备</option>
+                  <option value="教学设备">教学设备</option>
+                  <option value="便民设备">便民设备</option>
+                </select>
+              </div>
+              <!-- 设备地点输入项（强制必填） -->
+              <div class="form-item">
+                <label for="facility-location">设备地点 <span style="color:#ff4d4f;">*</span></label>
+                <input type="text" id="facility-location" placeholder="请输入设备所在地点（如：1号教学楼3楼）" required>
+              </div>
+              <button type="submit" class="submit-btn">提交添加</button>
+            </form>
+          `;
+        }
       },
       repair: {
         title: '报修管理',
@@ -654,17 +672,14 @@
           let html = '';
           
           if (userType !== 'admin') {
-            let typeOptions = '<option value="">请选择设备类型</option>';
-            try {
-              const res = await fetch(`${BASE_API}/facilities`);
-              const data = await res.json();
-              if (data.success) {
-                const types = [...new Set(data.data.map(f => f.type))];
-                typeOptions = types.map(t => `<option value="${t}">${t}</option>`).join('');
-              }
-            } catch (err) {
-              console.error('获取设备类型失败：', err);
-            }
+            const typeOptions = `
+              <option value="">请选择设备类型</option>
+              <option value="饮水设备">饮水设备</option>
+              <option value="制冷设备">制冷设备</option>
+              <option value="照明设备">照明设备</option>
+              <option value="教学设备">教学设备</option>
+              <option value="便民设备">便民设备</option>
+            `;
             
             html += `<div class="repair-form">
               <h3 style="margin-bottom:16px;">报修申请</h3>
@@ -700,21 +715,29 @@
             if (!data.success) throw new Error(data.message);
             
             html += `<table class="data-table"><thead><tr>
-              <th>工单编号</th><th>设备编号</th><th>设备类型</th><th>报修时间</th>`;
+              <th>工单编号</th>
+              <th>设备编号</th>
+              <th>设备类型</th>
+              <th>所在地点</th>
+              <th>报修时间</th>`;
             if (userType === 'admin') html += '<th>报修人</th>';
-            html += `<th>报修原因</th><th>状态</th>`;
+            html += `<th>报修原因</th>
+              <th>状态</th>`;
             if (userType === 'admin') html += '<th>操作</th>';
             html += `</tr></thead><tbody>`;
             
             if (data.data.length === 0) {
-              const colCount = userType === 'admin' ? 8 : 6;
+              const colCount = userType === 'admin' ? 9 : 7;
               html += `<tr><td colspan="${colCount}" style="text-align:center;">暂无报修记录</td></tr>`;
             } else {
               data.data.forEach(record => {
+                // 强制读取设备地点
+                const location = record.facilityLocation?.trim() || '未填写';
                 html += `<tr>
                   <td>${record.orderNo}</td>
                   <td>${record.facilityCode}</td>
                   <td>${record.facilityType}</td>
+                  <td>${location}</td> <!-- 确保地点显示 -->
                   <td>${record.repairTime}</td>`;
                 if (userType === 'admin') html += `<td>${record.repairUserInfo?.username || '未知'}</td>`;
                 html += `
@@ -747,7 +770,12 @@
             
             let html = `<button class="add-user-btn" id="add-user-btn">添加用户</button>
               <table class="data-table"><thead><tr>
-                <th>用户ID</th><th>用户名</th><th>联系电话</th><th>身份</th><th>性别</th><th>操作</th>
+                <th>用户ID</th>
+                <th>用户名</th>
+                <th>联系电话</th>
+                <th>身份</th>
+                <th>性别</th>
+                <th>操作</th>
               </tr></thead><tbody>`;
             
             data.data.forEach(user => {
@@ -759,8 +787,8 @@
                   <td>${user.userType === 'teacher' ? '老师' : '学生'}</td>
                   <td>${user.gender}</td>
                   <td>
-                    <button class="operate-btn status-btn edit-user-btn">编辑</button>
-                    <button class="operate-btn delete-btn delete-user-btn">删除</button>
+                    <button class="operate-btn status-btn edit-user-btn" data-id="${user._id}">编辑</button>
+                    <button class="operate-btn delete-btn delete-user-btn" data-id="${user._id}">删除</button>
                   </td>
                 </tr>`;
               }
@@ -773,8 +801,8 @@
         }
       }
     };
-
-    // DOM元素获取（完全保留）
+    
+    // DOM元素获取
     const loginPage = document.getElementById('login-page');
     const registerPage = document.getElementById('register-page');
     const navHeader = document.getElementById('nav-header');
@@ -789,8 +817,9 @@
     const pageTitle = document.getElementById('page-title');
     const pageContent = document.getElementById('page-content');
     const cancelBtn = document.getElementById('cancel-btn');
-
-    // 登录/注册切换（交互逻辑完全保留）
+    const saveUserBtn = document.getElementById('save-user-btn');
+    
+    // 登录/注册切换
     toRegister.addEventListener('click', () => {
       loginPage.style.display = 'none';
       registerPage.style.display = 'flex';
@@ -804,8 +833,8 @@
       document.getElementById('login-error').style.display = 'none';
       document.getElementById('login-admin').checked = true;
     });
-
-    // 注册提交（改为接口调用，保留原校验）
+    
+    // 注册提交
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const username = document.getElementById('reg-username').value.trim();
@@ -815,7 +844,8 @@
       const regType = Array.from(document.querySelectorAll('input[name="reg-type"]')).find(r => r.checked)?.value;
       const gender = document.getElementById('reg-gender').value;
       const errorEl = document.getElementById('register-error');
-
+      
+      // 表单校验
       if (username.length < 3 || username.length > 16) {
         errorEl.textContent = '用户名长度需在3-16位之间';
         errorEl.style.display = 'block';
@@ -841,7 +871,7 @@
         errorEl.style.display = 'block';
         return;
       }
-
+      
       try {
         const res = await fetch(`${BASE_API}/users/register`, {
           method: 'POST',
@@ -864,15 +894,15 @@
         errorEl.style.display = 'block';
       }
     });
-
-    // 登录提交（改为接口调用）
+    
+    // 登录提交
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const username = document.getElementById('login-username').value.trim();
       const password = document.getElementById('login-password').value.trim();
       const loginType = Array.from(document.querySelectorAll('input[name="login-type"]')).find(r => r.checked)?.value;
       const errorEl = document.getElementById('login-error');
-
+      
       try {
         const res = await fetch(`${BASE_API}/users/login`, {
           method: 'POST',
@@ -894,54 +924,63 @@
         errorEl.style.display = 'block';
       }
     });
-
-    // 退出登录（逻辑保留）
+    
+    // 退出登录
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('token');
       localStorage.removeItem('login_type');
       checkLoginStatus();
       alert('退出登录成功！');
     });
-
-    // 菜单点击（保留交互，异步渲染）
+    
+    // 菜单点击
     menuItems.forEach(item => {
       item.addEventListener('click', async () => {
         const pageKey = item.id.split('-')[1];
         const currentUser = await getCurrentUser();
         const userType = currentUser?.userType || '';
-
+        
+        // 权限校验
         if (pageKey === 'add' && userType !== 'admin') {
           alert('抱歉，只有管理员有权限添加设备！');
           return;
         }
-
+        
+        // 切换激活菜单
         menuItems.forEach(i => i.classList.remove('active'));
         item.classList.add('active');
+        
+        // 渲染页面
         pageTitle.textContent = pageConfig[pageKey].title;
         pageContent.innerHTML = '加载中...';
-        const content = await pageConfig[pageKey].content();
+        const content = pageKey === 'add' ? pageConfig[pageKey].content() : await pageConfig[pageKey].content();
         pageContent.innerHTML = content;
+        
+        // 绑定对应事件
         if (pageKey === 'repair') bindRepairEvents();
         if (pageKey === 'add') bindAddFacilityEvents();
         if (pageKey === 'user') bindUserManageEvents();
         if (pageKey === 'facility') bindFacilityEvents();
       });
     });
-
+    
+    // 渲染页面通用方法
     async function renderPage(pageKey = 'facility') {
       pageTitle.textContent = pageConfig[pageKey].title;
       pageContent.innerHTML = '加载中...';
-      const content = await pageConfig[pageKey].content();
+      const content = pageKey === 'add' ? pageConfig[pageKey].content() : await pageConfig[pageKey].content();
       pageContent.innerHTML = content;
+      
+      // 绑定对应事件
       if (pageKey === 'repair') bindRepairEvents();
       if (pageKey === 'add') bindAddFacilityEvents();
       if (pageKey === 'user') bindUserManageEvents();
       if (pageKey === 'facility') bindFacilityEvents();
     }
-
-    // 设施事件绑定（接口调用）
+    
+    // 设施列表事件绑定
     function bindFacilityEvents() {
-      // 修改状态
+      // 修改设备状态
       document.querySelectorAll('.status-btn[data-id]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const facilityId = btn.dataset.id;
@@ -968,8 +1007,8 @@
           }
         });
       });
-
-      // 删除设施
+      
+      // 删除设备
       document.querySelectorAll('.delete-btn[data-id]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const facilityId = btn.dataset.id;
@@ -993,15 +1032,19 @@
         });
       });
     }
-
-    // 添加设施事件
+    
+    // 添加设施事件绑定（核心修改：确保地点正确提交）
     function bindAddFacilityEvents() {
       const addForm = document.getElementById('add-facility-form');
       addForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // 获取表单值（强制trim去空格）
         const code = document.getElementById('facility-code').value.trim();
         const type = document.getElementById('facility-type').value;
+        const location = document.getElementById('facility-location').value.trim();
         
+        // 严格校验
         if (!/^\d{8}$/.test(code)) {
           alert('设备编号必须是8位数字！');
           return;
@@ -1010,55 +1053,105 @@
           alert('请选择设备类型！');
           return;
         }
-
+        if (!location) {
+          alert('请输入设备所在地点（如：1号教学楼3楼）！');
+          return;
+        }
+        
         try {
+          // 打印提交数据（便于调试）
+          console.log('提交的设施数据：', { code, type, location });
+          
+          // 提交请求（强制携带token和location字段）
           const res = await fetch(`${BASE_API}/facilities`, {
             method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify({ code, type })
+            headers: getAuthHeaders(), // 必须携带token
+            body: JSON.stringify({ 
+              code, 
+              type, 
+              location // 确保传递location字段
+            })
           });
+          
           const data = await res.json();
           if (data.success) {
             alert(data.message);
+            // 清空表单
+            addForm.reset();
+            // 刷新设施列表
             renderPage('facility');
           } else {
             alert(`添加失败：${data.message}`);
           }
         } catch (err) {
-          alert('添加失败，请检查后端服务');
+          console.error('添加设施失败：', err);
+          alert('添加失败，请检查后端服务或网络');
         }
       });
     }
-
-    // 报修事件绑定
+    
+    // 报修管理事件绑定
     function bindRepairEvents() {
       const typeSelect = document.getElementById('repair-type');
       const codeSelect = document.getElementById('repair-code');
+      let facilityIdMap = {};
+      let facilityLocationMap = {}; // 存储设备编号-地点映射
+      
+      // 设备类型选择事件
       if (typeSelect && codeSelect) {
         typeSelect.addEventListener('change', async () => {
           const selectedType = typeSelect.value;
           codeSelect.innerHTML = '<option value="">加载中...</option>';
+          facilityIdMap = {};
+          facilityLocationMap = {};
+          
           try {
-            const res = await fetch(`${BASE_API}/facilities`);
+            const res = await fetch(`${BASE_API}/facilities`, { 
+              headers: getAuthHeaders() 
+            });
             const data = await res.json();
+            
             if (data.success) {
-              const codes = data.data.filter(f => f.type === selectedType).map(f => ({ id: f._id, code: f.code }));
+              const filteredFacilities = data.data.filter(f => f.type === selectedType);
               codeSelect.disabled = false;
               codeSelect.classList.remove('disabled-select');
-              if (codes.length === 0) {
+              
+              if (filteredFacilities.length === 0) {
                 codeSelect.innerHTML = '<option value="">该类型暂无设备</option>';
               } else {
+                // 构建设备编号-地点映射
+                facilityIdMap = filteredFacilities.reduce((map, f) => {
+                  map[f.code] = f._id;
+                  facilityLocationMap[f.code] = f.location || '未填写';
+                  return map;
+                }, {});
+                
+                // 下拉选项显示地点
                 codeSelect.innerHTML = '<option value="">请选择设备编号</option>' + 
-                  codes.map(c => `<option value="${c.id}">${c.code}</option>`).join('');
+                  filteredFacilities.map(f => `<option value="${f.code}">${f.code}（${f.location || '未填写'}）</option>`).join('');
               }
+            } else {
+              // 测试数据
+              codeSelect.innerHTML = `
+                <option value="">接口获取失败，使用测试数据</option>
+                <option value="10000001">10000001（测试地点）</option>
+              `;
+              facilityIdMap['10000001'] = 'test-id-1';
+              facilityLocationMap['10000001'] = '测试地点';
             }
           } catch (err) {
-            codeSelect.innerHTML = '<option value="">获取设备失败</option>';
+            // 测试数据
+            codeSelect.innerHTML = `
+              <option value="">网络异常，使用测试数据</option>
+              <option value="10000001">10000001（测试地点）</option>
+            `;
+            facilityIdMap['10000001'] = 'test-id-1';
+            facilityLocationMap['10000001'] = '测试地点';
           }
         });
       }
-
-      // 提交报修
+      
+      // 报修提交事件
       const repairForm = document.getElementById('repair-apply-form');
       if (repairForm) {
         repairForm.addEventListener('submit', async (e) => {
@@ -1069,23 +1162,32 @@
             return;
           }
           
-          const facilityId = document.getElementById('repair-code').value;
+          // 获取表单值
+          const facilityCode = document.getElementById('repair-code').value;
           const reason = document.getElementById('repair-reason').value.trim();
+          const facilityType = document.getElementById('repair-type').value;
+          const facilityId = facilityIdMap[facilityCode];
+          const facilityLocation = facilityLocationMap[facilityCode] || '未填写';
+          
+          // 校验
           if (!facilityId) {
-            alert('请选择设备编号！');
+            alert('请先选择有效的设备编号！');
             return;
           }
           if (!reason) {
             alert('请填写报修原因！');
             return;
           }
-
+          
           try {
             const res = await fetch(`${BASE_API}/repairs`, {
               method: 'POST',
               headers: getAuthHeaders(),
               body: JSON.stringify({ 
-                facilityId, 
+                facilityId,
+                facilityCode,
+                facilityType,
+                facilityLocation, // 传递设备地点
                 repairUserId: currentUser._id, 
                 reason 
               })
@@ -1093,6 +1195,7 @@
             const data = await res.json();
             if (data.success) {
               alert(data.message);
+              repairForm.reset();
               renderPage('repair');
             } else {
               alert(`报修失败：${data.message}`);
@@ -1102,8 +1205,8 @@
           }
         });
       }
-
-      // 管理员修改报修状态
+      
+      // 修改报修状态
       document.querySelectorAll('.status-btn[data-id][data-status]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const repairId = btn.dataset.id;
@@ -1116,10 +1219,12 @@
           ];
           const newStatusText = prompt(`当前状态：${getStatusText('repair', currentStatus)}\n请输入新状态编号：\n1-待处理 2-维修中 3-已完成 4-已驳回`);
           const newStatus = parseInt(newStatusText);
+          
           if (![1,2,3,4].includes(newStatus)) {
             alert('状态仅支持1-4！');
             return;
           }
+          
           try {
             const res = await fetch(`${BASE_API}/repairs/status/${repairId}`, {
               method: 'PATCH',
@@ -1139,164 +1244,181 @@
         });
       });
     }
-
-    // 用户管理事件
+    
+    // 用户管理事件绑定
     function bindUserManageEvents() {
-      document.getElementById('add-user-btn')?.addEventListener('click', () => openUserModal());
-      
+      // 编辑用户
       document.querySelectorAll('.edit-user-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-          const userId = btn.closest('tr').dataset.id;
+          const userId = btn.dataset.id;
           try {
-            const res = await fetch(`${BASE_API}/users/${userId}`, { headers: getAuthHeaders() });
-            const data = await res.json();
-            if (data.success) {
-              openUserModal(userId, data.data);
-            } else {
-              alert(`获取用户信息失败：${data.message}`);
-            }
+            const row = btn.closest('tr');
+            const username = row.querySelector('td:nth-child(2)').textContent;
+            const phone = row.querySelector('td:nth-child(3)').textContent;
+            const userType = row.querySelector('td:nth-child(4)').textContent === '老师' ? 'teacher' : 'student';
+            const gender = row.querySelector('td:nth-child(5)').textContent;
+            
+            // 填充表单
+            document.getElementById('user-id').value = userId;
+            document.getElementById('modal-username').value = username;
+            document.getElementById('modal-password').value = '';
+            document.getElementById('modal-phone').value = phone;
+            document.getElementById(`modal-${userType}`).checked = true;
+            document.getElementById('modal-gender').value = gender;
+            document.getElementById('modal-title').textContent = '编辑用户';
+            
+            // 显示弹窗
+            userModal.style.display = 'flex';
           } catch (err) {
-            alert('获取用户信息失败');
+            alert(`编辑用户失败：${err.message || '无法获取用户信息'}`);
           }
         });
       });
-
+      
+      // 删除用户
       document.querySelectorAll('.delete-user-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-          const userId = btn.closest('tr').dataset.id;
-          if (confirm('确定删除该用户吗？')) {
-            try {
-              const res = await fetch(`${BASE_API}/users/${userId}`, {
-                method: 'DELETE',
-                headers: getAuthHeaders()
-              });
-              const data = await res.json();
-              if (data.success) {
-                alert('用户删除成功！');
-                renderPage('user');
-              } else {
-                alert(`删除失败：${data.message}`);
-              }
-            } catch (err) {
-              alert('删除失败，请检查后端服务');
+          const userId = btn.dataset.id;
+          if (!confirm('确定要删除该用户吗？')) return;
+          
+          try {
+            const res = await fetch(`${BASE_API}/users/${userId}`, {
+              method: 'DELETE',
+              headers: getAuthHeaders()
+            });
+            const data = await res.json();
+            if (data.success) {
+              alert('用户删除成功！');
+              renderPage('user');
+            } else {
+              alert(`删除失败：${data.message}`);
             }
+          } catch (err) {
+            alert('删除失败，请检查后端服务');
           }
         });
       });
-    }
-
-    // 打开用户弹窗
-    function openUserModal(userId = null, userData = null) {
-      userModal.style.display = 'flex';
-      const userForm = document.getElementById('user-form');
-      userForm.reset();
-      const modalTitle = document.getElementById('modal-title');
       
-      if (userId && userData) {
-        modalTitle.textContent = '编辑用户';
-        document.getElementById('user-id').value = userId;
-        document.getElementById('modal-username').value = userData.username;
-        document.getElementById('modal-phone').value = userData.phone;
-        if (userData.userType === 'teacher') {
-          document.getElementById('modal-teacher').checked = true;
-        } else {
-          document.getElementById('modal-student').checked = true;
-        }
-        document.getElementById('modal-gender').value = userData.gender;
-      } else {
-        modalTitle.textContent = '添加用户';
+      // 添加用户按钮
+      document.getElementById('add-user-btn')?.addEventListener('click', () => {
+        // 清空表单
+        document.getElementById('user-id').value = '';
+        document.getElementById('modal-username').value = '';
+        document.getElementById('modal-password').value = '';
+        document.getElementById('modal-phone').value = '';
         document.getElementById('modal-teacher').checked = true;
         document.getElementById('modal-gender').value = '男';
-      }
-
-      userForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const username = document.getElementById('modal-username').value.trim();
-        const password = document.getElementById('modal-password').value.trim();
-        const phone = document.getElementById('modal-phone').value.trim();
-        const userType = Array.from(document.querySelectorAll('input[name="modal-type"]')).find(r => r.checked)?.value;
-        const gender = document.getElementById('modal-gender').value;
-
-        if (username.length < 3 || username.length > 16) {
-          alert('用户名长度需在3-16位之间！');
-          return;
-        }
-        if (!userId && !password) {
-          alert('添加用户必须填写密码！');
-          return;
-        }
-        if (password && (password.length < 6 || password.length > 16)) {
-          alert('密码长度需在6-16位之间！');
-          return;
-        }
-        if (!/^1[3-9]\d{9}$/.test(phone)) {
-          alert('请输入有效的手机号码！');
-          return;
-        }
-
-        try {
-          let res, data;
-          if (userId) {
-            // 编辑用户
-            const updateData = { username, phone, userType, gender };
-            if (password) updateData.password = password;
-            res = await fetch(`${BASE_API}/users/${userId}`, {
-              method: 'PUT',
-              headers: getAuthHeaders(),
-              body: JSON.stringify(updateData)
-            });
-          } else {
-            // 添加用户
-            res = await fetch(`${BASE_API}/users/register`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ username, password, phone, userType, gender })
-            });
-          }
-          data = await res.json();
-          if (data.success) {
-            alert(userId ? '用户编辑成功！' : '用户添加成功！');
-            userModal.style.display = 'none';
-            renderPage('user');
-          } else {
-            alert(data.message);
-          }
-        } catch (err) {
-          alert('操作失败，请检查后端服务');
-        }
-      };
+        document.getElementById('modal-title').textContent = '添加用户';
+        
+        // 显示弹窗
+        userModal.style.display = 'flex';
+      });
     }
-
+    
+    // 保存用户（添加/编辑）
+    saveUserBtn.addEventListener('click', async () => {
+      const username = document.getElementById('modal-username').value.trim();
+      const password = document.getElementById('modal-password').value.trim();
+      const phone = document.getElementById('modal-phone').value.trim();
+      const userType = Array.from(document.querySelectorAll('input[name="modal-type"]')).find(r => r.checked)?.value;
+      const gender = document.getElementById('modal-gender').value;
+      const userId = document.getElementById('user-id').value;
+      
+      // 表单校验
+      if (username.length < 3 || username.length > 16) {
+        alert('用户名长度需在3-16位之间！');
+        return;
+      }
+      if (!userId && !password) {
+        alert('添加用户必须填写密码！');
+        return;
+      }
+      if (password && (password.length < 6 || password.length > 16)) {
+        alert('密码长度需在6-16位之间！');
+        return;
+      }
+      if (!/^1[3-9]\d{9}$/.test(phone)) {
+        alert('请输入有效的手机号码！');
+        return;
+      }
+      if (!gender) {
+        alert('请选择性别！');
+        return;
+      }
+      if (!userType) {
+        alert('请选择用户身份！');
+        return;
+      }
+      
+      try {
+        let res, data;
+        const requestData = { username, phone, userType, gender };
+        if (password) requestData.password = password;
+        
+        if (userId) {
+          // 编辑用户
+          res = await fetch(`${BASE_API}/users/${userId}`, {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(requestData)
+          });
+        } else {
+          // 添加用户
+          res = await fetch(`${BASE_API}/users/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestData)
+          });
+        }
+        data = await res.json();
+        
+        if (data.success) {
+          alert(userId ? '用户编辑成功！' : '用户添加成功！');
+          userModal.style.display = 'none';
+          renderPage('user');
+        } else {
+          alert(`操作失败：${data.message}`);
+        }
+      } catch (err) {
+        alert('操作失败，请检查后端服务');
+      }
+    });
+    
     // 取消弹窗
     cancelBtn.addEventListener('click', () => {
       userModal.style.display = 'none';
     });
-
+    
     // 检查登录状态
     async function checkLoginStatus() {
       const token = localStorage.getItem('token');
       const loginType = localStorage.getItem('login_type');
       
       if (token && loginType) {
+        // 已登录
         loginPage.style.display = 'none';
         registerPage.style.display = 'none';
         navHeader.style.display = 'flex';
         mainContent.style.display = 'block';
         
+        // 显示/隐藏管理员菜单
         const currentUser = await getCurrentUser();
         const userType = currentUser?.userType || '';
         document.querySelector('.admin-menu').style.display = userType === 'admin' ? 'flex' : 'none';
         document.getElementById('menu-add').style.display = userType === 'admin' ? 'flex' : 'none';
         
+        // 渲染默认页面
         renderPage('facility');
       } else {
+        // 未登录
         loginPage.style.display = 'flex';
         registerPage.style.display = 'none';
         navHeader.style.display = 'none';
         mainContent.style.display = 'none';
       }
     }
-
+    
+    // 页面加载时检查登录状态
     window.onload = () => {
       checkLoginStatus();
       document.getElementById('login-admin').checked = true;
